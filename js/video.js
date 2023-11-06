@@ -1,81 +1,83 @@
-// Utility to simplify the selection of elements.
-const selectElement = selector => document.querySelector(selector);
 
-// Set up references to the DOM elements we'll need.
-const videoElement = selectElement('#player1');
-const volumeIndicator = selectElement("#volume");
 
-// Initializes the video settings.
-const initializeVideo = () => {
-    console.log("Good job opening the window");
-    videoElement.autoplay = false;
-    videoElement.loop = false;
-    console.log(`Auto play is set to ${videoElement.autoplay}`);
-    console.log(`Loop is set to ${videoElement.loop}`);
-};
+let videoPlayer; 
 
-// Updates the volume display.
-const updateVolumeDisplay = () => {
-    volumeIndicator.textContent = `${videoElement.volume * 100}%`;
-};
+window.addEventListener("load", function() {
+	console.log("Good job opening the window");
+  videoPlayer = document.getElementById("player1");
+  videoPlayer.autoplay = false;
+  videoPlayer.loop = false;
+});
 
-// Event listener setup.
-const setupEventListeners = () => {
-    selectElement("#play").addEventListener("click", () => {
-        console.log("Play Video");
-        videoElement.play();
-        updateVolumeDisplay();
-    });
 
-    selectElement('#pause').addEventListener("click", () => {
-        console.log("Pause video");
-        videoElement.pause();
-    });
+//TO-DO: Volume update not working
+// Update Volume Information
+function updateVolume() {
+	const volumeDisplay = document.getElementById("volume");
+	volumeDisplay.innerText = `${Math.round(videoPlayer.volume * 100)}%`;
+}
 
-    selectElement("#slower").addEventListener("click", () => {
-        videoElement.playbackRate *= 0.9;
-        console.log(`Speed is ${videoElement.playbackRate}`);
-    });
+document.querySelector("#play").addEventListener("click", function() {
+	console.log("Play Video");
+	videoPlayer.play();
+	updateVolume();
+});
 
-    selectElement("#faster").addEventListener("click", () => {
-        videoElement.playbackRate /= 0.9;
-        console.log(`Speed is ${videoElement.playbackRate}`);
-    });
 
-    selectElement("#skip").addEventListener("click", () => {
-        console.log("Skip ahead");
-        videoElement.currentTime += 10;
-        if (videoElement.currentTime >= videoElement.duration) {
-            videoElement.currentTime = 0;
-        }
-        console.log(`Video current time is ${videoElement.currentTime}`);
-    });
+// Pause Button
+document.getElementById("pause").addEventListener("click", function() {
+	console.log("Pause Video");
+  videoPlayer.pause();
+});
 
-    selectElement('#mute').addEventListener('click', function() {
-        videoElement.muted = !videoElement.muted;
-        console.log(videoElement.muted ? "Mute" : "Unmute");
-        this.textContent = videoElement.muted ? "Unmute" : "Mute";
-    });
+// Slow Down
+document.getElementById("slower").addEventListener("click", function() {
+	console.log("Slow Video");
+	videoPlayer.playbackRate -= 0.1;
+  console.log(`New speed: ${videoPlayer.playbackRate}`);
+});
 
-    selectElement('#slider').addEventListener("input", function() {
-        videoElement.volume = this.value / 100;
-        updateVolumeDisplay();
-        console.log(`The current volume is ${videoElement.volume}`);
-    });
+// Speed Up
+document.getElementById("faster").addEventListener("click", function() {
+	console.log("Speed Up Video");
+  videoPlayer.playbackRate += (videoPlayer.playbackRate * 0.1);
+  console.log(`New speed: ${videoPlayer.playbackRate}`);
+});
 
-    selectElement('#vintage').addEventListener("click", () => {
-        videoElement.classList.add("oldSchool");
-        console.log("Old school styling");
-    });
+document.getElementById('skip').addEventListener("click", function() {
+  videoPlayer.currentTime += 10;
+  if (videoPlayer.currentTime > videoPlayer.duration) {
+    videoPlayer.currentTime = 0;
+  }
+  console.log(`Current location: ${videoPlayer.currentTime}`);
+});
 
-    selectElement('#orig').addEventListener("click", () => {
-        videoElement.classList.remove("oldSchool");
-        console.log("Remove old school styling");
-    });
-};
+// Mute Button
+muteButton = document.getElementById('mute')
+muteButton.addEventListener("click", function() {
+  if (videoPlayer.muted) {
+    videoPlayer.muted = false;
+    muteButton.innerText = 'Mute';
+  } else {
+    videoPlayer.muted = true;
+    muteButton.innerText = 'Unmute';
+  }
+});
 
-// Initialize the video and set up event listeners on window load.
-window.addEventListener("load", () => {
-    initializeVideo();
-    setupEventListeners();
+// Volume Slider
+volumeSlider = document.getElementById("slider")
+volumeSlider.addEventListener("input", function() {
+  videoPlayer.volume = volumeSlider.value / 100;
+  updateVolume();
+});
+
+
+// Old School
+document.getElementById("vintage").addEventListener("click", function() {
+  videoPlayer.classList.add('oldSchool');
+});
+
+// Original
+document.getElementById("orig").addEventListener("click", function() {
+  videoPlayer.classList.remove('oldSchool');
 });
